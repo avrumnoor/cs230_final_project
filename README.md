@@ -1,5 +1,7 @@
 # CS230:
 
+### For grading, see code/cs230/ for code that 1) downloads images and 2) runs downstream tasks from baseline features.
+
 ## Directories:
 - code/: contains relevant code for the project
 - code/analysis/: contains code that runs through the MOSAIKS pipeline in order
