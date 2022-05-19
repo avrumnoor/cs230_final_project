@@ -3,12 +3,12 @@ import numpy as np
 from tqdm import tqdm
 
 # Remove API key when submitting code
-api_key = "AIzaSyDGolpksJRMmpyNotD1AUeUwXJPG2M4nmk"
+api_key = "AIzaSyBhsqLvbNikFDmIaAtRZQtZnUm5FYgE5PM"
 
 url = "https://maps.googleapis.com/maps/api/staticmap?"
 
 # Choose what grid sampling method
-sampling = "UAR"
+sampling = "POP"
 
 grid_path = "../../data/int/grids/"
 
@@ -44,18 +44,18 @@ print("Sample lat+lons:")
 print(real_latlons.shape)
 print(real_latlons[:10])
 
-print("Full grid columns")
-print(full_grid.files)
-print("# lat, # lon:")
-print(len(full_grid["lat"]), len(full_grid["lon"]))
-i = np.array([int(ix.split(",")[0]) for ix in ids])
-j = np.array([int(ix.split(",")[1]) for ix in ids])
-ij = np.vstack((i, j)).T
-print("Sample ids:")
-print(ij)
-lats, lons = full_grid["lat"][ij[:, 0] - 1], full_grid["lon"][ij[:, 1] - 1]
-print("Sample lat+lons:")
-print(np.vstack((lats, lons)).T)
+# print("Full grid columns")
+# print(full_grid.files)
+# print("# lat, # lon:")
+# print(len(full_grid["lat"]), len(full_grid["lon"]))
+# i = np.array([int(ix.split(",")[0]) for ix in ids])
+# j = np.array([int(ix.split(",")[1]) for ix in ids])
+# ij = np.vstack((i, j)).T
+# print("Sample ids:")
+# print(ij)
+# lats, lons = full_grid["lat"][ij[:, 0] - 1], full_grid["lon"][ij[:, 1] - 1]
+# print("Sample lat+lons:")
+# print(np.vstack((lats, lons)).T)
 
 # Helper function to generate the end file name 
 def generate_image_file_name(lat, lon, zoom, pix):
@@ -70,7 +70,7 @@ def print_output_file_names(limit):
 print_output_file_names(10)
 
 # MODIFY AT YOUR OWN RISK PLEASE BE CAREFUL
-image_start, image_end = 0, 25000
+image_start, image_end = 75000, 100000
 
 # function to actually download the images
 def download_images(start=0, end=0):
