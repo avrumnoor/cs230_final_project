@@ -70,7 +70,7 @@ def print_output_file_names(limit):
 print_output_file_names(10)
 
 # MODIFY AT YOUR OWN RISK PLEASE BE CAREFUL
-image_start, image_end = 0, 25000
+image_start, image_end = 75000, 100000
 
 # function to actually download the images
 def download_images(start=0, end=0):
