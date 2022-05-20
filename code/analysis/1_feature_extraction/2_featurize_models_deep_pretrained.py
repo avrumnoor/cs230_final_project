@@ -67,7 +67,9 @@ def full_featurize(dataset, model_ft, batch_size):
     output_features = []
     data = {}
     ids = []
-    for j, (i, X_batch) in enumerate(dataloader):
+    print(len(dataloader))
+    for j, what in enumerate(dataloader):
+        i, X_batch = what[:2]
         print("batch:", j)
         ids += i
         t = time.time()
@@ -102,19 +104,24 @@ if __name__ == "__main__":
             / f"{this_c['model_type']}_pretrained_{c.grid_str}_{sample}.pkl"
         )
 
-    model_ft = getattr(models, this_c["model_type"])(pretrained=True)
+        print(subgrid_path)
+        print(out_file)
 
-    subgrid = np.load(subgrid_path)
-    ids = subgrid["ID"]
-    latlons = np.hstack((subgrid["lat"][:, np.newaxis], subgrid["lon"][:, np.newaxis]))
+        model_ft = getattr(models, this_c["model_type"])(pretrained=True)
 
-    if args.subset is not None:
-        latlons = latlons[: args.subset]
-        ids = ids[: args.subset]
+        subgrid = np.load(subgrid_path)
+        ids = subgrid["ID"]
+        latlons = np.hstack((subgrid["lat"][:, np.newaxis], subgrid["lon"][:, np.newaxis]))
 
-    dataset = RemoteSensingSubgridDataset(c.data_dir, latlons, ids)
-    results_dict = full_featurize(dataset, model_ft, this_c["batch_size"])
-    results_dict["latlon"] = latlons
-    results_dict["ids_X"] = ids
-    with open(out_file, "wb") as f:
-        dill.dump(results_dict, f, protocol=4)
+        if args.subset is not None:
+            latlons = latlons[: args.subset]
+            ids = ids[: args.subset]
+
+        print(c.data_dir)
+
+        dataset = RemoteSensingSubgridDataset(c.data_dir + f"raw/imagery/CONTUS_{sample}", latlons, ids)
+        results_dict = full_featurize(dataset, model_ft, this_c["batch_size"])
+        results_dict["latlon"] = latlons
+        results_dict["ids_X"] = ids
+        with open(out_file, "wb") as f:
+            dill.dump(results_dict, f, protocol=4)

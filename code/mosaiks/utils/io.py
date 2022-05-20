@@ -49,6 +49,8 @@ def get_suffix(c, appname):
 
 def get_filepaths(c, app, feattype="random", is_ACS=False):
     grid_str, smpl_str = get_suffix(c, app)
+    c.grid_str = grid_str
+    c.smpl_str = smpl_str
     c.data_suffix = grid_str + "_" + smpl_str
     c.full_suffix = (
         c.data_suffix
@@ -318,7 +320,7 @@ def load_img_from_local(
         The image
     """
     fpath = generate_key_name(latlon, image_dir, zoom, pix)
-    return imageio.imread(fpath)
+    return np.asarray(imageio.imread(fpath))
 
 
 def generate_key_name(latlon, image_dir, zoom, pix):
