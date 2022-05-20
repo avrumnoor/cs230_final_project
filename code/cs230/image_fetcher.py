@@ -3,7 +3,7 @@ import numpy as np
 from tqdm import tqdm
 
 # Remove API key when submitting code
-api_key = "AIzaSyDGolpksJRMmpyNotD1AUeUwXJPG2M4nmk"
+api_key = ""
 
 url = "https://maps.googleapis.com/maps/api/staticmap?"
 
@@ -48,8 +48,11 @@ print("Full grid columns")
 print(full_grid.files)
 print("# lat, # lon:")
 print(len(full_grid["lat"]), len(full_grid["lon"]))
-i = np.array([int(ix.split(",")[0]) for ix in ids])
-j = np.array([int(ix.split(",")[1]) for ix in ids])
+
+separator = "," if isinstance(ids[0], str) else b","
+
+i = np.array([int(ix.split(separator)[0]) for ix in ids])
+j = np.array([int(ix.split(separator)[1]) for ix in ids])
 ij = np.vstack((i, j)).T
 print("Sample ids:")
 print(ij)
@@ -86,4 +89,4 @@ def download_images(start=0, end=0):
     with open(filename, 'wb') as f:
       f.write(r.content)
 
-download_images(image_start, image_end)
+# download_images(image_start, image_end)

@@ -11,7 +11,8 @@ cd "$(dirname "$0")/.."
 
 # make sure conda is initialized
 CONDA_PREFIX_1=${CONDA_PREFIX_1:-/opt/conda}
-source $CONDA_PREFIX_1/etc/profile.d/conda.sh
+# source $CONDA_PREFIX_1/etc/profile.d/conda.sh
+source /home/ubuntu/anaconda3/etc/profile.d/conda.sh
 
 # take in passed conda environment name as argument
 # if none passed, use current conda env
@@ -73,8 +74,11 @@ scripts..."
 #time Rscript ${GRID_DIR}/create_grid_dense_sample_regions.R
 
 # extract features
+echo "Now extracting features"
 #time python ${FEAT_DIR}/1_create_rcf_feature_matrices.py
-#time python ${FEAT_DIR}/2_featurize_models_deep_pretrained
+time python ${FEAT_DIR}/2_featurize_models_deep_pretrained.py
+
+exit 0
 
 # extract labels: See various scripts in code/analysis/2_label_creation
 

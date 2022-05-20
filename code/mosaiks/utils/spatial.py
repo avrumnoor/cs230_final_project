@@ -16,8 +16,10 @@ def ids_to_ij(ids):
     Returns:
         Nx2 array of int: Lon, Lat
     """
-    i = np.array([int(ix.split(",")[0]) for ix in ids])
-    j = np.array([int(ix.split(",")[1]) for ix in ids])
+
+    separator = "," if isinstance(ids[0], str) else b","
+    i = np.array([int(ix.split(separator)[0]) for ix in ids])
+    j = np.array([int(ix.split(separator)[1]) for ix in ids])
     return np.vstack((i, j)).T
 
 
