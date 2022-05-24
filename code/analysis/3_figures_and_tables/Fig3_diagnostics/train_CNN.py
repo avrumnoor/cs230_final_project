@@ -38,21 +38,21 @@ if __name__ == "__main__":
     parser.add_argument("--num_examples", default=100000, type=int)
     parser.add_argument("--log-loc", type=str, default="./pytorch.logs")
     parser.add_argument(
-        "--checkpoint-dir",
+        "--checkpoint_dir",
         type=str,
         default=None,
         help="Directory in which to store checkpoints",
     )
     parser.add_argument(
-        "--save-dir",
+        "--save_dir",
         type=str,
-        default=str(c.data_dir / "int" / "deep_models"),
+        default=str(Path(c.data_dir) / "int" / "deep_models"),
         help="Directory in which to store checkpoints",
     )
 
     args = parser.parse_args()
 
-    args.checkpoint_dir = Path(args.checkpoint_dir)
+    args.checkpoint_dir = Path(args.checkpoint_dir) if args.checkpoint_dir != None else None
     args.save_dir = Path(args.save_dir)
     assert args.outcome in c.app_order
 
@@ -83,6 +83,7 @@ if __name__ == "__main__":
         [int(y) for y in x.split(",")] for x in args.milestones.split("|")
     ]
     all_initial_lr = [float(x) for x in args.initial_lrs.split(",")]
+    print(f"Pretrained: {args.pretrained}")
     model_ft = _models[args.model](pretrained=args.pretrained)
     num_ftrs = model_ft.fc.in_features
     model_ft.fc = nn.Linear(num_ftrs, 1)
@@ -142,8 +143,8 @@ if __name__ == "__main__":
 
     results_dict = cnn.deep_learning_solve_function(
         model_uuid,
-        ids_val_train,
-        ids_val_test,
+        ids_train,
+        ids_test,
         Y_train,
         Y_test,
         initial_lr=best_initial_lr,

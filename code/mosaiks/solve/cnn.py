@@ -2,6 +2,7 @@ import io as python_io
 import pickle
 import time
 from pathlib import Path
+from tqdm import tqdm
 
 import numpy as np
 import sklearn.metrics
@@ -66,6 +67,7 @@ def train_model(
     global_step = 0
     preds = {}
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    logger.debug("Using torch.device: {}".format(device))
     for epoch in range(num_epochs):
         logger.debug("Epoch {}/{}".format(epoch + 1, num_epochs))
         logger.debug("-" * 10)
@@ -84,7 +86,13 @@ def train_model(
             summary_writer.add_scalar(
                 tag="learning_rate", scalar_value=lr, global_step=global_step
             )
-            for ids, inputs, labels in dataloaders[phase]:
+            logger.debug("Total batches: {}".format(len(dataloaders[phase])))
+            end_time = time.time()
+            debug_time = time.time()
+            for ids, inputs, labels in tqdm(dataloaders[phase]):
+                # data loading time
+                # logger.debug("Dataloading time: {}".format(time.time() - end_time))
+
                 counter += 1
                 global_step += 1
                 all_labels += list(np.vstack(labels.numpy()))
@@ -121,6 +129,12 @@ def train_model(
                             scalar_value=loss.item(),
                             global_step=global_step,
                         )
+                # logger.debug("Batch time: {}".format(time.time() - end_time))
+                yeet = 100
+                if counter % yeet == 0:
+                    logger.debug("Time for {} batches: {}".format(yeet, time.time() - debug_time))
+                    debug_time = time.time()
+                # end_time = time.time()
 
             all_labels = np.array(all_labels)
             all_predictions = np.array(all_predictions)
@@ -237,7 +251,7 @@ def deep_learning_solve_function(
     subset=None,
     log_loc="./pytorch.logs",
     save_dir=Path(c.data_dir) / "int" / "deep_models",
-    batch_size=16,
+    batch_size=32,
     shuffle=True,
     **kwargs,
 ):
@@ -263,7 +277,7 @@ def deep_learning_solve_function(
             subset=subset,
             batch_size=batch_size,
             shuffle=shuffle,
-            num_workers=0,
+            num_workers=4,
         )
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = model.to(device)
