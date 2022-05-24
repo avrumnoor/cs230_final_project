@@ -76,9 +76,7 @@ scripts..."
 # extract features
 echo "Now extracting features"
 #time python ${FEAT_DIR}/1_create_rcf_feature_matrices.py
-time python ${FEAT_DIR}/2_featurize_models_deep_pretrained.py
-
-exit 0
+#time python ${FEAT_DIR}/2_featurize_models_deep_pretrained.py
 
 # extract labels: See various scripts in code/analysis/2_label_creation
 
@@ -92,17 +90,24 @@ as CNN training are not included in this replication but may be run individually
 the associated scripts.)"
 
 # Fig 2
-echo "Running Fig 2: Regressions..."
-time run_nb ${FIG_DIR}/Fig2_randomCV/1_run_regressions.ipynb
-echo "Running Fig 2: Plots..."
-time run_nb ${FIG_DIR}/Fig2_randomCV/2_make_fig.ipynb
+#echo "Running Fig 2: Regressions..."
+#time run_nb ${FIG_DIR}/Fig2_randomCV/1_run_regressions.ipynb
+#echo "Running Fig 2: Plots..."
+#time run_nb ${FIG_DIR}/Fig2_randomCV/2_make_fig.ipynb
 
 
 # Fig 3
-echo "Running Fig3: Training CNN (skipped for time)..."
-# for LABEL in treecover elevation population nightlights income roads housing; do
-#     time python ${FIG_DIR}/Fig3_diagnostics/train_CNN.py \
-#         ${MOSAIKS_DATA}/output/cnn_comaprison/resnet18_${LABEL} --outcome $LABEL
+#echo "Running Fig3: Training CNN (skipped for time)..."
+#for LABEL in treecover elevation population nightlights income roads housing; do
+     #time python ${FIG_DIR}/Fig3_diagnostics/train_CNN.py \
+         #${MOSAIKS_DATA}/output/cnn_comaprison/resnet18_${LABEL} --outcome $LABEL
+
+echo "Running resnet18 test"
+time python ${FIG_DIR}/Fig3_diagnostics/train_CNN.py \
+	${MOSAIKS_DATA}/output/cnn_comparison/resnet18_elevation --num_epochs 4 --outcome elevation
+
+exit 11
+
 # done
 echo "Running Fig 3: Sensitivity to N and K..."
 time run_nb ${FIG_DIR}/Fig3_diagnostics/model_sensitivity.ipynb
