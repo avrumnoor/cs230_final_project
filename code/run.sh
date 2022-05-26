@@ -104,7 +104,7 @@ the associated scripts.)"
 
 echo "Running resnet18 test"
 time python ${FIG_DIR}/Fig3_diagnostics/train_CNN.py \
-	${MOSAIKS_DATA}/output/cnn_comparison/resnet18_elevation --num_epochs 4 --outcome elevation
+	${MOSAIKS_DATA}/output/cnn_comparison/resnet18_elevation --num_epochs 4 --outcome nightlights
 
 exit 11
 
