@@ -285,6 +285,7 @@ def coatesng_featurize(
     filter_batch_size=None,
     gpu=False,
     rgb=True,
+    hijack=False,
 ):
     net.use_gpu = gpu
     if filter_batch_size is None:
@@ -295,16 +296,21 @@ def coatesng_featurize(
 
     for start, end in chunk_idxs_by_size(num_filters, filter_batch_size):
         data_loader = torch.utils.data.DataLoader(dataset, batch_size=data_batchsize)
+        print(f"batch size: {data_batchsize}")
         X_lift_batch = []
         print(f"generating features {start} to {end}")
         names = []
         with tqdm(total=len(dataset)) as pbar:
             for X_batch_named in data_loader:
-                X_batch = X_batch_named[1]
+                if hijack:
+                    X_batch = X_batch_named
+                else:
+                    X_batch = X_batch_named[1]
                 if gpu:
                     X_batch = X_batch.cuda()
                 X_var = X_batch
-                names += [x for x in X_batch_named[0]]
+                if not hijack:
+                    names += [x for x in X_batch_named[0]]
                 X_lift = net.forward_partial(X_var, start, end).cpu().data.numpy()
                 X_lift_batch.append(X_lift)
                 pbar.update(X_lift.shape[0])
@@ -372,7 +378,7 @@ def build_featurizer(
     return net
 
 
-def featurize(image_folder, c):
+def featurize(image_folder, c, hijack=False, alt_dataset=None):
     fsettings = c.features["random"]
     return __featurize(
         image_folder,
@@ -384,6 +390,8 @@ def featurize(image_folder, c):
         fsettings["bias"],
         fsettings["filter_scale"],
         fsettings["seed"],
+        hijack=hijack,
+        alt_dataset=alt_dataset,
     )
 
 
@@ -434,6 +442,8 @@ def __featurize(
     filter_batch_size=1024,
     img_size=256,
     patch_dataset_loc=None,
+    hijack=False,
+    alt_dataset=None,
 ):
     """Featurize image folder"""
 
@@ -469,14 +479,17 @@ def __featurize(
     )
     start = time.time()
     print(featurizer)
-    X_lift, names = coatesng_featurize(
-        featurizer, dataset, data_batchsize=data_batchsize, gpu=gpu
-    )
+    if hijack:
+        X_lift, names = coatesng_featurize(featurizer, alt_dataset, data_batchsize=data_batchsize, gpu=gpu, hijack=hijack)
+    else:
+        X_lift, names = coatesng_featurize(
+            featurizer, dataset, data_batchsize=data_batchsize, gpu=gpu
+        )
     end = time.time()
     featurizer = featurizer.cpu()
     print(X_lift.shape)
     print(
-        f"featurization complete, featurized {len(dataset)} training points "
+        f"featurization complete, featurized {len(alt_dataset) if hijack else len(dataset)} training points "
         f"{X_lift.shape[1]} output features, took {end - start} seconds"
     )
     return X_lift, names, featurizer.cpu()
@@ -511,12 +524,17 @@ class RemoteSensingSubgridDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, i):
         id_i = self.ids[i]
+        # id_i = id_i.decode('UTF-8')
         y_i = self.y[i]
         x_i = self.__get_image_from_id__(id_i)
         x_i = x_i.transpose(2, 0, 1)
         if self.transform is not None:
             x_i = torch.from_numpy(x_i)
             x_i = self.transform(x_i)
+        #print(type(id_i))
+        #print(x_i.dtype)
+        #print(y_i.dtype)
+
         return id_i, x_i, y_i
 
 

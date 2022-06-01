@@ -75,8 +75,10 @@ scripts..."
 
 # extract features
 echo "Now extracting features"
-#time python ${FEAT_DIR}/1_create_rcf_feature_matrices.py
+time python ${FEAT_DIR}/1_create_rcf_feature_matrices.py
 #time python ${FEAT_DIR}/2_featurize_models_deep_pretrained.py
+
+exit 11
 
 # extract labels: See various scripts in code/analysis/2_label_creation
 
@@ -103,10 +105,9 @@ the associated scripts.)"
          #${MOSAIKS_DATA}/output/cnn_comaprison/resnet18_${LABEL} --outcome $LABEL
 
 echo "Running resnet18 test"
-time python ${FIG_DIR}/Fig3_diagnostics/train_CNN.py \
-	${MOSAIKS_DATA}/output/cnn_comparison/resnet18_elevation --num_epochs 4 --outcome nightlights
+#time python ${FIG_DIR}/Fig3_diagnostics/train_CNN.py \
+#	${MOSAIKS_DATA}/output/cnn_comparison/resnet18_elevation --num_epochs 4 --outcome nightlights
 
-exit 11
 
 # done
 echo "Running Fig 3: Sensitivity to N and K..."

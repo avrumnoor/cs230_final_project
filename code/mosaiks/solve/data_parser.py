@@ -276,6 +276,10 @@ def merge_dropna_transform_split_train_test(c, app, X, latlons, ACS=False, seed=
     print("Merging labels and features...")
     Y, X, latlons = merge(Y, X, latlons)
 
+    print("WHAT")
+
+    print(X[:3])
+
     ## drop obs and log transform if needed
     X, Y, latlons = transforms.dropna_and_transform(X, Y, latlons, c_app)
 
